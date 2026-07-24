@@ -113,10 +113,11 @@ async def request_status_renewal_to_add_exercise(msg: types.Message):
 
     users = await get_user(msg.from_user.id)
 
-    if users is not None:
 
-        # البحث عن صلاحية إضافة التمارين
-        has_permission = False
+    # البحث عن صلاحية إضافة التمارين
+    has_permission = False
+
+    if users is not None:
 
         for user in users:
 
@@ -135,14 +136,14 @@ async def request_status_renewal_to_add_exercise(msg: types.Message):
 
             break
 
-        # لا يملك هذه الصلاحية
-        if not has_permission:
-            await msg.answer(
-                "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة التمارين.\n\n"
-                "يمكنك طلب الصلاحية باستعمال:\n"
-                "/add_exercise"
-            )
-            return
+    # لا يملك هذه الصلاحية
+    if not has_permission:
+        await msg.answer(
+            "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة التمارين.\n\n"
+            "يمكنك طلب الصلاحية باستعمال:\n"
+            "/add_exercise"
+        )
+        return
 
     
 
@@ -235,11 +236,12 @@ async def request_status_renewal_to_add_solution(msg: types.Message):
 
     users = await get_user(msg.from_user.id)
 
+    
+
+    # البحث عن صلاحية إضافة الحلول
+    has_permission = False
+
     if users is not None:
-
-        # البحث عن صلاحية إضافة الحلول
-        has_permission = False
-
         for user in users:
 
             if user["role"] == Role.ADMIN:
@@ -257,14 +259,14 @@ async def request_status_renewal_to_add_solution(msg: types.Message):
 
             break
 
-        # لا يملك هذه الصلاحية
-        if not has_permission:
-            await msg.answer(
-                "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة الحلول.\n\n"
-                "يمكنك طلب الصلاحية باستعمال:\n"
-                "/add_solution"
-            )
-            return
+    # لا يملك هذه الصلاحية
+    if not has_permission:
+        await msg.answer(
+            "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة الحلول.\n\n"
+            "يمكنك طلب الصلاحية باستعمال:\n"
+            "/add_solution"
+        )
+        return
 
 
     pending, error = await has_pending_request(
