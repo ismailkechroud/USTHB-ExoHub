@@ -66,15 +66,16 @@ async def request_permission_to_add_exercise(msg: types.Message):
 
     users = await get_user(msg.from_user.id)
 
-    for user in users:
+    if users is not None:
+        for user in users:
 
-        if user["role"] == Role.ADMIN:
-            await msg.answer("👑 أنت مدير، ولا تحتاج إلى صلحيات.")
-            return
-        
-        if user["role"] == Role.ADMIN or user["role"] == Role.ADDER_EXERCISE:
-            await msg.answer("✅ لديك صلاحية إضافة التمارين بالفعل.")
-            return
+            if user["role"] == Role.ADMIN:
+                await msg.answer("👑 أنت مدير، ولا تحتاج إلى صلحيات.")
+                return
+            
+            if user["role"] == Role.ADMIN or user["role"] == Role.ADDER_EXERCISE:
+                await msg.answer("✅ لديك صلاحية إضافة التمارين بالفعل.")
+                return
 
 
 
@@ -184,15 +185,16 @@ async def request_permission_to_add_solution(msg: types.Message):
 
     users = await get_user(msg.from_user.id)
 
-    for user in users:
+    if users is not None:
+        for user in users:
 
-        if user["role"] == Role.ADMIN:
-            await msg.answer("👑 أنت مدير، ولا تحتاج إلى صلحيات.")
-            return
-        
-        if user["role"] == Role.ADDER_SOLUTION:
-            await msg.answer("✅ لديك صلاحية إضافة حل بالفعل.")
-            return
+            if user["role"] == Role.ADMIN:
+                await msg.answer("👑 أنت مدير، ولا تحتاج إلى صلاحيات.")
+                return
+
+            if user["role"] == Role.ADDER_SOLUTION:
+                await msg.answer("✅ لديك صلاحية إضافة حل بالفعل.")
+                return
 
 
 
