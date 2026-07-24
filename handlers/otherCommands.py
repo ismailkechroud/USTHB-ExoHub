@@ -113,34 +113,36 @@ async def request_status_renewal_to_add_exercise(msg: types.Message):
 
     users = await get_user(msg.from_user.id)
 
-    # البحث عن صلاحية إضافة التمارين
-    has_permission = False
+    if users is not None:
 
-    for user in users:
+        # البحث عن صلاحية إضافة التمارين
+        has_permission = False
 
-        if user["role"] == Role.ADMIN:
-            await msg.answer("👑 أنت مدير، ولا تحتاج إلى تجديد الحالة.")
+        for user in users:
+
+            if user["role"] == Role.ADMIN:
+                await msg.answer("👑 أنت مدير، ولا تحتاج إلى تجديد الحالة.")
+                return
+
+            if user["role"] != Role.ADDER_EXERCISE:
+                continue
+
+            has_permission = True
+
+            if user["status"] == Status.ACTIVE:
+                await msg.answer("✅ حالتك نشطة بالفعل.")
+                return
+
+            break
+
+        # لا يملك هذه الصلاحية
+        if not has_permission:
+            await msg.answer(
+                "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة التمارين.\n\n"
+                "يمكنك طلب الصلاحية باستعمال:\n"
+                "/add_exercise"
+            )
             return
-
-        if user["role"] != Role.ADDER_EXERCISE:
-            continue
-
-        has_permission = True
-
-        if user["status"] == Status.ACTIVE:
-            await msg.answer("✅ حالتك نشطة بالفعل.")
-            return
-
-        break
-
-    # لا يملك هذه الصلاحية
-    if not has_permission:
-        await msg.answer(
-            "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة التمارين.\n\n"
-            "يمكنك طلب الصلاحية باستعمال:\n"
-            "/add_exercise"
-        )
-        return
 
     
 
@@ -233,34 +235,37 @@ async def request_status_renewal_to_add_solution(msg: types.Message):
 
     users = await get_user(msg.from_user.id)
 
-    # البحث عن صلاحية إضافة الحلول
-    has_permission = False
+    if users is not None:
 
-    for user in users:
+        # البحث عن صلاحية إضافة الحلول
+        has_permission = False
 
-        if user["role"] == Role.ADMIN:
-            await msg.answer("👑 أنت مدير، ولا تحتاج إلى تجديد الحالة.")
+        for user in users:
+
+            if user["role"] == Role.ADMIN:
+                await msg.answer("👑 أنت مدير، ولا تحتاج إلى تجديد الحالة.")
+                return
+
+            if user["role"] != Role.ADDER_SOLUTION:
+                continue
+
+            has_permission = True
+
+            if user["status"] == Status.ACTIVE:
+                await msg.answer("✅ حالتك نشطة بالفعل.")
+                return
+
+            break
+
+        # لا يملك هذه الصلاحية
+        if not has_permission:
+            await msg.answer(
+                "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة الحلول.\n\n"
+                "يمكنك طلب الصلاحية باستعمال:\n"
+                "/add_solution"
+            )
             return
 
-        if user["role"] != Role.ADDER_SOLUTION:
-            continue
-
-        has_permission = True
-
-        if user["status"] == Status.ACTIVE:
-            await msg.answer("✅ حالتك نشطة بالفعل.")
-            return
-
-        break
-
-    # لا يملك هذه الصلاحية
-    if not has_permission:
-        await msg.answer(
-            "❌ لا يمكنك تجديد حالتك لأنك لا تملك صلاحية إضافة الحلول.\n\n"
-            "يمكنك طلب الصلاحية باستعمال:\n"
-            "/add_solution"
-        )
-        return
 
     pending, error = await has_pending_request(
         msg.from_user.id,
