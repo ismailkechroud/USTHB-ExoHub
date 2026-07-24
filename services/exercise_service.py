@@ -13,6 +13,7 @@ from pdfminer.high_level import extract_text
 from rapidfuzz import fuzz
 from aiogram.types import InputMediaPhoto, Message, FSInputFile
 
+import fitz
 from pdf2image import convert_from_path
 from PIL import Image
 import numpy as np
@@ -204,15 +205,14 @@ async def comfirmation_exo(message, candidate):
 
 
 
-################# Convert PDF to Images #################
 
-poppler_path = "utils/poppler_path"
+################# Convert PDF to Images #################
 
 async def convert_pdf_to_imgs(msg, pdf_path):
 
-    async def crop_white_margins(msg, page):
+    async def crop_white_margins(msg, image: Image.Image):
 
-        img = page.convert("L")  # grayscale (photo black white)
+        img = image.convert("L")  # Grayscale
 
         arr = np.array(img)
 
@@ -223,6 +223,7 @@ async def convert_pdf_to_imgs(msg, pdf_path):
 
         if len(rows) == 0 or len(cols) == 0:
             await msg.answer("No content found in image")
+            return image
 
         top, bottom = rows[0], rows[-1]
         left, right = cols[0], cols[-1]
@@ -230,27 +231,40 @@ async def convert_pdf_to_imgs(msg, pdf_path):
         pad = 50
 
         top = max(0, top - pad)
-        bottom += pad
+        bottom = min(arr.shape[0], bottom + pad)
         left = max(0, left - pad)
-        right += pad
+        right = min(arr.shape[1], right + pad)
 
-        return page.crop((left, top, right, bottom))
+        return image.crop((left, top, right, bottom))
 
-   
-    # print(f"pdf_path inside fun: {pdf_path}")
-    pages = convert_from_path(pdf_path=pdf_path, poppler_path=poppler_path)
+
+    doc = fitz.open(pdf_path)
 
     results = []
-    
-    for i, page in enumerate(pages, 1):
 
-        clean_img = await crop_white_margins(msg, page)
+    try:
+        for page in doc:
 
-        results.append(clean_img)
+            # Render page إلى صورة
+            pix = page.get_pixmap(dpi=200)
+
+            # تحويلها إلى PIL Image
+            mode = "RGB" if pix.alpha == 0 else "RGBA"
+
+            image = Image.frombytes(
+                mode,
+                (pix.width, pix.height),
+                pix.samples
+            )
+
+            clean_img = await crop_white_margins(msg, image)
+
+            results.append(clean_img)
+
+    finally:
+        doc.close()
 
     return results
-
-
 
 ################# send solution to channel #################
 
