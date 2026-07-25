@@ -171,7 +171,7 @@ async def process_two(msg, state): # PDF to IMGs + Storage exo in DB
     
     # Convert pdf to imgs
     pdf_path = pdf_file["path"]
-    # print(f"pdf_path outside fun: {pdf_path}")
+
     images = await convert_pdf_to_imgs(msg=msg, pdf_path=pdf_file["path"])
 
 

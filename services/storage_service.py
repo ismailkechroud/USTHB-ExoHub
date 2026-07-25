@@ -103,7 +103,8 @@ def save_imgs_tmp(images, name_folder) -> list:
 
         paths.append(path)
 
-        return paths
+    
+    return paths
 
 
 
