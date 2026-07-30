@@ -16,7 +16,7 @@ from permission.constants import (
 
 router = Router()
 
-MAX_INACTIVE_DAYS = 1
+MAX_INACTIVE_DAYS = 90
 
 
 @router.message(Command("update"))

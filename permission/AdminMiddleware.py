@@ -9,9 +9,10 @@ class AdminMiddleware(BaseMiddleware):
 
     async def __call__(self, handler, event, data):
 
-        user = await get_user(event.from_user.id)
-        user = user[0]
-        
+        users = await get_user(event.from_user.id)
+
+        user = users[0] if users else None
+
         if user is None or user["role"] != Role.ADMIN:
 
             if isinstance(event, Message):
