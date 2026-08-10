@@ -176,6 +176,7 @@ async def get_exercises_of_module(language: str, year: str, specialty: str, modu
         "exercises",
         {"language": language},
     )
+    exercises.sort(key=lambda exo: exo["id"])
 
     # 4) build dict
     result = {}
